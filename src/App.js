@@ -40,9 +40,17 @@ const App = () => {
       <h1>My hacker stories</h1>
       <InputWithLabel
         id="search"
+        isFocused={true}
         value={searchTerm}
         onInputChange={handleSearch}>
-          <strong>Search:</strong>
+        <strong>Search:</strong>
+      </InputWithLabel>
+      <InputWithLabel
+        id="search2"
+        isFocused={true}
+        value={searchTerm}
+        onInputChange={handleSearch}>
+        <strong>Search:</strong>
       </InputWithLabel>
       <hr />
       <List list={searchedStories} />
@@ -82,15 +90,27 @@ const Item = ({ title, url, author, num_comments, points }) => (
   </div>
 );
 
-const InputWithLabel = ({ id, value, type = 'text', onInputChange, children }) => (
-  <>
-    <label htmlFor={id}>{children} </label>
-    <input id={id}
-      type={type}
-      value={value}
-      onChange={onInputChange}
-    />
-  </>
-);
+const InputWithLabel = ({ id, value, type = 'text', onInputChange, isFocused, children }) => {
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children} </label>
+      <input
+        ref={inputRef}
+        id={id}
+        type={type}
+        value={value}
+        onChange={onInputChange}
+      />
+    </>
+  );
+}
 
 export default App;
