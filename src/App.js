@@ -26,11 +26,7 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState(localStorage.getItem('search') || 'React');
-
-  React.useEffect(() => {
-    localStorage.setItem('search', searchTerm);
-  }, [searchTerm]);
+  const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
 
   const handleSearch = event => {
     setSearchTerm(event.target.value);
@@ -49,16 +45,28 @@ const App = () => {
   )
 };
 
-
-const List = ({ list }) =>
-  list.map(({objectID, ...item}) => 
-  <Item
-    key={objectID}
-    {...item}
-  />
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
   );
 
-const Item = ({title, url, author, num_comments, points}) => (
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]
+  );
+
+  return [value, setValue];
+}
+
+const List = ({ list }) =>
+  list.map(({ objectID, ...item }) =>
+    <Item
+      key={objectID}
+      {...item}
+    />
+  );
+
+const Item = ({ title, url, author, num_comments, points }) => (
   <div>
     <span>
       <a href={url}>{title}</a>
