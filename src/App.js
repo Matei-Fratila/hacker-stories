@@ -149,7 +149,16 @@ const storiesReducer = (state, action) => {
 
 const API_ENDPOINT = 'https://hn.algolia.com/api/v1/search?query=';
 
+const getSumComments = stories => {
+  console.log('C');
+
+  return stories.data.reduce(
+    (result, value) => result + value.num_comments, 0);
+};
+
 const App = () => {
+  console.log('B:App');
+
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
   const [stories, dispatchStories] = React.useReducer(storiesReducer, { data: [], isLoading: false, isError: false });
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
@@ -182,19 +191,18 @@ const App = () => {
     handleFetchStories();
   }, [handleFetchStories]);
 
-  const handleRemoveStory = item => {
+  const handleRemoveStory = React.useCallback(item => {
     dispatchStories({
       type: 'REMOVE_STORY',
       payload: item
     });
-  }
+  }, []);
 
-  const searchedStories = stories.data.filter(story =>
-    story.title.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase()));
+  const sumComments = React.useMemo(() => getSumComments(stories), [stories]);
 
   return (
     <StyledContainer>
-      <StyledHeadlinePrimary>My hacker stories</StyledHeadlinePrimary>
+      <StyledHeadlinePrimary>My hacker stories with {sumComments} comments</StyledHeadlinePrimary>
 
       <SearchForm
         searchTerm={searchTerm}
@@ -247,14 +255,14 @@ const useSemiPersistentState = (key, initialState) => {
   return [value, setValue];
 }
 
-const List = ({ list, onRemoveItem }) =>
+const List = React.memo(({ list, onRemoveItem }) => console.log('B:List') ||
   list.map(item =>
     <Item
       key={item.objectID}
       item={item}
       onRemoveItem={onRemoveItem}
     />
-  );
+  ));
 
 const Item = ({ item, onRemoveItem }) => (
   <StyledItem>
