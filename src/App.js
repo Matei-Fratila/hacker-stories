@@ -2,7 +2,7 @@ import * as React from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 
-import styles from './App.module.css'
+import { ReactComponent as Check } from './check.svg';
 
 const StyledContainer = styled.div`
 height: 100vw;
@@ -47,6 +47,12 @@ transition: all 0.1s ease-in;
 &:hover {
 background: #171212;
 color: #ffffff;
+  svg {
+    g {
+      fill: #ffffff;
+      stroke: #ffffff;
+    }
+  }
 }
 `;
 
@@ -216,8 +222,7 @@ const SearchForm = ({
       <strong>Search:</strong>
     </InputWithLabel>
     <StyledButtonLarge type="submit"
-      disabled={!searchTerm}
-      className={`${styles.button} ${styles.buttonLarge}`}>
+      disabled={!searchTerm}>
       Submit
     </StyledButtonLarge>
   </StyledSearchForm>
@@ -256,9 +261,9 @@ const Item = ({ item, onRemoveItem }) => (
     <StyledColumn width="10%">
       <StyledButtonSmall
         type="button"
-        onClick={() => onRemoveItem(item)}
-        className={`${styles.button} ${styles.buttonSmall}`}>
+        onClick={() => onRemoveItem(item)}>
         Dismiss
+        <Check height="18px" width="18px" />
       </StyledButtonSmall>
     </StyledColumn>
   </StyledItem>
@@ -282,7 +287,6 @@ const InputWithLabel = ({ id, value, type = 'text', onInputChange, isFocused, ch
         type={type}
         value={value}
         onChange={onInputChange}
-        className={styles.input}
       />
     </>
   );
